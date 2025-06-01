@@ -130,6 +130,13 @@
             margin-bottom: 10px;
         }
         
+        .resume-output .objective {
+            text-align: center;
+            font-style: italic;
+            margin: 20px 0;
+            padding: 0 20px;
+        }
+        
         .resume-output ul {
             list-style-type: none;
             padding-left: 5px;
@@ -148,10 +155,19 @@
             left: 0;
         }
         
+        .resume-output .skills-container {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .resume-output .skills-column {
+            flex: 1;
+        }
+        
         .resume-output .skills-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
         }
         
         .resume-output .skill-item {
@@ -230,6 +246,11 @@
             label {
                 width: 120px;
             }
+            
+            .resume-output .skills-container {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -241,6 +262,11 @@
             <div class="form-group">
                 <label for="fullName">Full Name:</label>
                 <input type="text" id="fullName" name="fullName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="careerObjective">Career Objective:</label>
+                <textarea id="careerObjective" name="careerObjective" required placeholder="Brief summary of your career goals and aspirations"></textarea>
             </div>
             
             <div class="two-columns">
@@ -275,19 +301,43 @@
         </section>
         
         <section id="skills-section">
-            <h3>Skills <button type="button" class="add-btn" onclick="addSkillField()">+ Add Skill</button></h3>
-            <div id="skills-container">
-                <div class="form-group skill-group">
-                    <label for="skill1">Skill 1:</label>
-                    <input type="text" id="skill1" name="skill1" required>
+            <h3>Skills</h3>
+            <div class="two-columns">
+                <div class="column">
+                    <div class="section-controls">
+                        <h4>Technical Skills</h4>
+                        <button type="button" class="add-btn" onclick="addTechSkillField()">+ Add Skill</button>
+                    </div>
+                    <div id="tech-skills-container">
+                        <div class="form-group skill-group">
+                            <label for="techSkill1">Skill 1:</label>
+                            <input type="text" id="techSkill1" name="techSkill1" required>
+                        </div>
+                        <div class="form-group skill-group">
+                            <label for="techSkill2">Skill 2:</label>
+                            <input type="text" id="techSkill2" name="techSkill2" required>
+                        </div>
+                        <div class="form-group skill-group">
+                            <label for="techSkill3">Skill 3:</label>
+                            <input type="text" id="techSkill3" name="techSkill3" required>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group skill-group">
-                    <label for="skill2">Skill 2:</label>
-                    <input type="text" id="skill2" name="skill2" required>
-                </div>
-                <div class="form-group skill-group">
-                    <label for="skill3">Skill 3:</label>
-                    <input type="text" id="skill3" name="skill3" required>
+                <div class="column">
+                    <div class="section-controls">
+                        <h4>Soft Skills</h4>
+                        <button type="button" class="add-btn" onclick="addSoftSkillField()">+ Add Skill</button>
+                    </div>
+                    <div id="soft-skills-container">
+                        <div class="form-group skill-group">
+                            <label for="softSkill1">Skill 1:</label>
+                            <input type="text" id="softSkill1" name="softSkill1" required>
+                        </div>
+                        <div class="form-group skill-group">
+                            <label for="softSkill2">Skill 2:</label>
+                            <input type="text" id="softSkill2" name="softSkill2" required>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -441,21 +491,36 @@
 
     <script>
         // Counter variables for dynamic sections
-        let skillCount = 3;
+        let techSkillCount = 3;
+        let softSkillCount = 2;
         let experienceCount = 1;
         let projectCount = 1;
         let responsibilityCount = 1;
         let achievementCount = 2;
 
-        // Add a new skill field
-        function addSkillField() {
-            skillCount++;
-            const container = document.getElementById('skills-container');
+        // Add a new technical skill field
+        function addTechSkillField() {
+            techSkillCount++;
+            const container = document.getElementById('tech-skills-container');
             const newSkill = document.createElement('div');
             newSkill.className = 'form-group skill-group';
             newSkill.innerHTML = `
-                <label for="skill${skillCount}">Skill ${skillCount}:</label>
-                <input type="text" id="skill${skillCount}" name="skill${skillCount}">
+                <label for="techSkill${techSkillCount}">Skill ${techSkillCount}:</label>
+                <input type="text" id="techSkill${techSkillCount}" name="techSkill${techSkillCount}">
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+            `;
+            container.appendChild(newSkill);
+        }
+
+        // Add a new soft skill field
+        function addSoftSkillField() {
+            softSkillCount++;
+            const container = document.getElementById('soft-skills-container');
+            const newSkill = document.createElement('div');
+            newSkill.className = 'form-group skill-group';
+            newSkill.innerHTML = `
+                <label for="softSkill${softSkillCount}">Skill ${softSkillCount}:</label>
+                <input type="text" id="softSkill${softSkillCount}" name="softSkill${softSkillCount}">
                 <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
             `;
             container.appendChild(newSkill);
@@ -566,14 +631,19 @@
             
             // Get all form values
             const fullName = document.getElementById('fullName').value;
+            const careerObjective = document.getElementById('careerObjective').value;
             const email = document.getElementById('email').value;
             const mobile = document.getElementById('mobile').value;
             const github = document.getElementById('github').value;
             const linkedin = document.getElementById('linkedin').value;
             
-            // Collect all skills
-            const skillInputs = document.querySelectorAll('input[id^="skill"]');
-            const skills = Array.from(skillInputs).map(skill => skill.value).filter(val => val);
+            // Collect all technical skills
+            const techSkillInputs = document.querySelectorAll('input[id^="techSkill"]');
+            const techSkills = Array.from(techSkillInputs).map(skill => skill.value).filter(val => val);
+            
+            // Collect all soft skills
+            const softSkillInputs = document.querySelectorAll('input[id^="softSkill"]');
+            const softSkills = Array.from(softSkillInputs).map(skill => skill.value).filter(val => val);
             
             // Education
             const college = document.getElementById('college').value;
@@ -655,10 +725,25 @@
                     ${linkedin ? `| <a href="${linkedin}" target="_blank">LinkedIn</a>` : ''}
                 </div>
                 
+                <div class="objective">
+                    <p>${careerObjective.replace(/\n/g, '<br>')}</p>
+                </div>
+                
                 <div class="section">
                     <h2>SKILLS</h2>
-                    <div class="skills-list">
-                        ${skills.map(skill => `<div class="skill-item">${skill}</div>`).join('')}
+                    <div class="skills-container">
+                        <div class="skills-column">
+                            <h3>Technical Skills</h3>
+                            <div class="skills-list">
+                                ${techSkills.map(skill => `<div class="skill-item">${skill}</div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="skills-column">
+                            <h3>Soft Skills</h3>
+                            <div class="skills-list">
+                                ${softSkills.map(skill => `<div class="skill-item">${skill}</div>`).join('')}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -692,12 +777,14 @@
                 resumeHTML += `
                     <div class="section">
                         <h2>ACADEMIC PROJECTS</h2>
-                        ${projects.map(proj => `
-                            <div class="project-item">
-                                <div class="project-title">${proj.title}</div>
-                                <div class="project-desc">${proj.details.replace(/\n/g, '<br>')}</div>
-                            </div>
-                        `).join('')}
+                        <ul>
+                            ${projects.map(proj => `
+                                <li>
+                                    <strong>${proj.title}</strong><br>
+                                    ${proj.details.split('\n').map(line => `• ${line}`).join('<br>')}
+                                </li>
+                            `).join('')}
+                        </ul>
                     </div>
                 `;
             }
@@ -723,7 +810,9 @@
                     <div class="section">
                         <h2>ACHIEVEMENTS</h2>
                         <ul>
-                            ${achievements.map(ach => `<li>${ach}</li>`).join('')}
+                            ${achievements.map(ach => `
+                                <li>${ach}</li>
+                            `).join('')}
                         </ul>
                     </div>
                 `;
