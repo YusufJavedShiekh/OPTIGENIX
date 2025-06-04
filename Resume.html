@@ -252,6 +252,18 @@
                 gap: 10px;
             }
         }
+
+        /* Custom section styling */
+        .custom-section {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .custom-section-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 
@@ -477,6 +489,15 @@
                 </div>
             </div>
         </section>
+
+        <!-- Custom Sections Container -->
+        <section id="custom-sections">
+            <div class="section-controls">
+                <h3>Additional Sections</h3>
+                <button type="button" class="add-btn" onclick="addCustomSection()">+ Add Section</button>
+            </div>
+            <div id="custom-sections-container"></div>
+        </section>
         
         <div class="form-row">
             <button type="button" onclick="generateResume()">Generate Resume</button>
@@ -497,6 +518,8 @@
         let projectCount = 1;
         let responsibilityCount = 1;
         let achievementCount = 2;
+        let customSectionCount = 0;
+        let sectionIds = [];
 
         // Add a new technical skill field
         function addTechSkillField() {
@@ -616,19 +639,154 @@
             container.appendChild(newAchievement);
         }
 
+        // Add a new custom section
+        function addCustomSection() {
+            customSectionCount++;
+            const sectionId = 'custom-section-' + Date.now();
+            sectionIds.push(sectionId);
+            
+            const container = document.getElementById('custom-sections-container');
+            const newSection = document.createElement('div');
+            newSection.className = 'custom-section';
+            newSection.id = sectionId;
+            newSection.innerHTML = `
+                <div class="form-group">
+                    <label for="customSectionTitle${customSectionCount}">Section Title:</label>
+                    <input type="text" id="customSectionTitle${customSectionCount}" name="customSectionTitle${customSectionCount}">
+                </div>
+                <div class="form-group">
+                    <label for="customSectionContent${customSectionCount}">Content:</label>
+                    <textarea id="customSectionContent${customSectionCount}" name="customSectionContent${customSectionCount}" placeholder="Enter section content"></textarea>
+                </div>
+                <button type="button" class="remove-btn" onclick="removeCustomSection('${sectionId}')">Remove Section</button>
+            `;
+            container.appendChild(newSection);
+        }
+
+        // Remove custom section
+        function removeCustomSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.remove();
+                sectionIds = sectionIds.filter(id => id !== sectionId);
+            }
+        }
+
         // Reset the entire form
         function resetForm() {
             if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
                 document.getElementById('resumeForm').reset();
                 document.getElementById('resumeOutput').style.display = 'none';
                 document.getElementById('resumeForm').style.display = 'block';
+                
+                // Reset counters
+                techSkillCount = 3;
+                softSkillCount = 2;
+                experienceCount = 1;
+                projectCount = 1;
+                responsibilityCount = 1;
+                achievementCount = 2;
+                customSectionCount = 0;
+                sectionIds = [];
+                
+                // Reset dynamic containers to initial state
+                document.getElementById('tech-skills-container').innerHTML = `
+                    <div class="form-group skill-group">
+                        <label for="techSkill1">Skill 1:</label>
+                        <input type="text" id="techSkill1" name="techSkill1" required>
+                    </div>
+                    <div class="form-group skill-group">
+                        <label for="techSkill2">Skill 2:</label>
+                        <input type="text" id="techSkill2" name="techSkill2" required>
+                    </div>
+                    <div class="form-group skill-group">
+                        <label for="techSkill3">Skill 3:</label>
+                        <input type="text" id="techSkill3" name="techSkill3" required>
+                    </div>
+                `;
+                
+                document.getElementById('soft-skills-container').innerHTML = `
+                    <div class="form-group skill-group">
+                        <label for="softSkill1">Skill 1:</label>
+                        <input type="text" id="softSkill1" name="softSkill1" required>
+                    </div>
+                    <div class="form-group skill-group">
+                        <label for="softSkill2">Skill 2:</label>
+                        <input type="text" id="softSkill2" name="softSkill2" required>
+                    </div>
+                `;
+                
+                document.getElementById('experience-container').innerHTML = `
+                    <div class="experience-item">
+                        <div class="form-group">
+                            <label for="position1">Position:</label>
+                            <input type="text" id="position1" name="position1">
+                        </div>
+                        <div class="form-group">
+                            <label for="company1">Company:</label>
+                            <input type="text" id="company1" name="company1">
+                        </div>
+                        <div class="form-group">
+                            <label for="expDate1">Date:</label>
+                            <input type="text" id="expDate1" name="expDate1" placeholder="MM/YYYY - MM/YYYY">
+                        </div>
+                        <div class="form-group">
+                            <label for="experience1">Work Description:</label>
+                            <textarea id="experience1" name="experience1" placeholder="Describe your work experience and technologies used"></textarea>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('projects-container').innerHTML = `
+                    <div class="project-item">
+                        <div class="form-group">
+                            <label for="project1Title">Project Title:</label>
+                            <input type="text" id="project1Title" name="project1Title">
+                        </div>
+                        <div class="form-group">
+                            <label for="project1Details">Project Details:</label>
+                            <textarea id="project1Details" name="project1Details" placeholder="Project details and technologies used"></textarea>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('responsibility-container').innerHTML = `
+                    <div class="responsibility-item">
+                        <div class="form-group">
+                            <label for="positionTitle1">Position Title:</label>
+                            <input type="text" id="positionTitle1" name="positionTitle1">
+                        </div>
+                        <div class="form-group">
+                            <label for="positionOrg1">Organization:</label>
+                            <input type="text" id="positionOrg1" name="positionOrg1">
+                        </div>
+                        <div class="form-group">
+                            <label for="positionDate1">Date:</label>
+                            <input type="text" id="positionDate1" name="positionDate1" placeholder="MM/YYYY - Present">
+                        </div>
+                        <div class="form-group">
+                            <label for="positionDesc1">Description:</label>
+                            <textarea id="positionDesc1" name="positionDesc1" placeholder="Describe your responsibilities"></textarea>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('achievements-container').innerHTML = `
+                    <div class="form-group achievement-group">
+                        <label for="achievement1">Achievement 1:</label>
+                        <input type="text" id="achievement1" name="achievement1">
+                    </div>
+                    <div class="form-group achievement-group">
+                        <label for="achievement2">Achievement 2:</label>
+                        <input type="text" id="achievement2" name="achievement2">
+                    </div>
+                `;
+                
+                document.getElementById('custom-sections-container').innerHTML = '';
             }
         }
 
         function generateResume() {
-            // Hide the form
-            document.getElementById('resumeForm').style.display = 'none';
-            
             // Get all form values
             const fullName = document.getElementById('fullName').value;
             const careerObjective = document.getElementById('careerObjective').value;
@@ -638,12 +796,22 @@
             const linkedin = document.getElementById('linkedin').value;
             
             // Collect all technical skills
+            const techSkills = [];
             const techSkillInputs = document.querySelectorAll('input[id^="techSkill"]');
-            const techSkills = Array.from(techSkillInputs).map(skill => skill.value).filter(val => val);
+            techSkillInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    techSkills.push(input.value);
+                }
+            });
             
             // Collect all soft skills
+            const softSkills = [];
             const softSkillInputs = document.querySelectorAll('input[id^="softSkill"]');
-            const softSkills = Array.from(softSkillInputs).map(skill => skill.value).filter(val => val);
+            softSkillInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    softSkills.push(input.value);
+                }
+            });
             
             // Education
             const college = document.getElementById('college').value;
@@ -660,12 +828,15 @@
             // Collect all experiences
             const experiences = [];
             for (let i = 1; i <= experienceCount; i++) {
-                const position = document.getElementById(`position${i}`)?.value;
-                const company = document.getElementById(`company${i}`)?.value;
-                const expDate = document.getElementById(`expDate${i}`)?.value;
-                const experience = document.getElementById(`experience${i}`)?.value;
+                const positionEl = document.getElementById(`position${i}`);
+                const companyEl = document.getElementById(`company${i}`);
                 
-                if (position && company) {
+                if (positionEl && companyEl && positionEl.value.trim() !== '' && companyEl.value.trim() !== '') {
+                    const position = positionEl.value;
+                    const company = companyEl.value;
+                    const expDate = document.getElementById(`expDate${i}`)?.value || '';
+                    const experience = document.getElementById(`experience${i}`)?.value || '';
+                    
                     experiences.push({
                         position,
                         company,
@@ -678,10 +849,12 @@
             // Collect all projects
             const projects = [];
             for (let i = 1; i <= projectCount; i++) {
-                const title = document.getElementById(`project${i}Title`)?.value;
-                const details = document.getElementById(`project${i}Details`)?.value;
+                const titleEl = document.getElementById(`project${i}Title`);
                 
-                if (title) {
+                if (titleEl && titleEl.value.trim() !== '') {
+                    const title = titleEl.value;
+                    const details = document.getElementById(`project${i}Details`)?.value || '';
+                    
                     projects.push({
                         title,
                         details
@@ -692,12 +865,14 @@
             // Collect all responsibilities
             const responsibilities = [];
             for (let i = 1; i <= responsibilityCount; i++) {
-                const title = document.getElementById(`positionTitle${i}`)?.value;
-                const org = document.getElementById(`positionOrg${i}`)?.value;
-                const date = document.getElementById(`positionDate${i}`)?.value;
-                const desc = document.getElementById(`positionDesc${i}`)?.value;
+                const titleEl = document.getElementById(`positionTitle${i}`);
                 
-                if (title) {
+                if (titleEl && titleEl.value.trim() !== '') {
+                    const title = titleEl.value;
+                    const org = document.getElementById(`positionOrg${i}`)?.value || '';
+                    const date = document.getElementById(`positionDate${i}`)?.value || '';
+                    const desc = document.getElementById(`positionDesc${i}`)?.value || '';
+                    
                     responsibilities.push({
                         title,
                         org,
@@ -710,9 +885,367 @@
             // Collect all achievements
             const achievements = [];
             for (let i = 1; i <= achievementCount; i++) {
-                const achievement = document.getElementById(`achievement${i}`)?.value;
-                if (achievement) {
-                    achievements.push(achievement);
+                const achievementEl = document.getElementById(`achievement${i}`);
+                if (achievementEl && achievementEl.value.trim() !== '') {
+                    achievements.push(achievementEl.value);
+                }
+            }
+
+            // Collect all custom sections
+            const customSections = [];
+            for (let i = 1; i <= customSectionCount; i++) {
+                const titleEl = document.getElementById(`customSectionTitle${i}`);
+                if (titleEl && titleEl.value.trim() !== '') {
+                    const title = titleEl.value;
+                    const content = document.getElementById(`customSectionContent${i}`)?.value || '';
+                    
+                    customSections.push({
+                        title,
+                        content
+                    });
+                }
+            }
+            
+            // Generate the resume HTML
+            let resumeHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${fullName}'s Resume</title>
+                    <style>
+                        body {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 20px;
+                        }
+                        h1 {
+                            color: rgb(11, 65, 165);
+                            text-align: center;
+                            margin-bottom: 5px;
+                        }
+                        .contact-info {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                        .section {
+                            margin-bottom: 20px;
+                        }
+                        .section h2 {
+                            color: rgb(11, 65, 165);
+                            border-bottom: 1px solid rgb(11, 65, 165);
+                            padding-bottom: 3px;
+                            margin-bottom: 10px;
+                        }
+                        .objective {
+                            text-align: center;
+                            font-style: italic;
+                            margin: 20px 0;
+                            padding: 0 20px;
+                        }
+                        ul {
+                            list-style-type: none;
+                            padding-left: 5px;
+                        }
+                        ul li {
+                            margin-bottom: 8px;
+                            position: relative;
+                            padding-left: 15px;
+                        }
+                        ul li:before {
+                            content: "•";
+                            color: rgb(11, 65, 165);
+                            position: absolute;
+                            left: 0;
+                        }
+                        .skills-container {
+                            display: flex;
+                            gap: 30px;
+                        }
+                        .skills-column {
+                            flex: 1;
+                        }
+                        .skills-list {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 10px;
+                        }
+                        .skill-item {
+                            background-color: #f0f0f0;
+                            padding: 5px 10px;
+                            border-radius: 3px;
+                        }
+                        .experience-item, .project-item {
+                            margin-bottom: 15px;
+                        }
+                        .experience-title, .project-title {
+                            font-weight: bold;
+                            margin-bottom: 5px;
+                        }
+                        .experience-company, .project-tech {
+                            font-style: italic;
+                            color: #555;
+                            margin-bottom: 5px;
+                        }
+                        @media print {
+                            body {
+                                padding: 0;
+                            }
+                        }
+                        @media (max-width: 600px) {
+                            .skills-container {
+                                flex-direction: column;
+                                gap: 10px;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>${fullName}</h1>
+                    <div class="contact-info">
+                        ${email} | ${mobile} | 
+                        ${github ? `<a href="${github}" target="_blank">GitHub</a>` : ''}
+                        ${linkedin ? `| <a href="${linkedin}" target="_blank">LinkedIn</a>` : ''}
+                    </div>
+                    
+                    <div class="objective">
+                        <p>${careerObjective.replace(/\n/g, '<br>')}</p>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>SKILLS</h2>
+                        <div class="skills-container">
+                            <div class="skills-column">
+                                <h3>Technical Skills</h3>
+                                <div class="skills-list">
+                                    ${techSkills.map(skill => `<div class="skill-item">${skill}</div>`).join('')}
+                                </div>
+                            </div>
+                            <div class="skills-column">
+                                <h3>Soft Skills</h3>
+                                <div class="skills-list">
+                                    ${softSkills.map(skill => `<div class="skill-item">${skill}</div>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>EDUCATION</h2>
+                        <ul>
+                            <li>${degree} | ${college} | CGPA: ${cgpa} | ${collegeDate}</li>
+                            <li>XII | ${hscSchool} | ${hscPercentage}% | ${hscDate}</li>
+                            <li>X  | ${sscSchool} | ${sscPercentage}% | ${sscDate}</li>
+                        </ul>
+                    </div>
+            `;
+            
+            // Add experiences if any
+            if (experiences.length > 0) {
+                resumeHTML += `
+                    <div class="section">
+                        <h2>EXPERIENCE</h2>
+                        ${experiences.map(exp => `
+                            <div class="experience-item">
+                                <div class="experience-title">${exp.position} | ${exp.company} (${exp.date || ''})</div>
+                                <div class="experience-desc">${exp.description.replace(/\n/g, '<br>')}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Add projects if any
+            if (projects.length > 0) {
+                resumeHTML += `
+                    <div class="section">
+                        <h2>ACADEMIC PROJECTS</h2>
+                        <ul>
+                            ${projects.map(proj => `
+                                <li>
+                                    <strong>${proj.title}</strong><br>
+                                    ${proj.details.split('\n').map(line => `• ${line}`).join('<br>')}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            // Add responsibilities if any
+            if (responsibilities.length > 0) {
+                resumeHTML += `
+                    <div class="section">
+                        <h2>POSITION OF RESPONSIBILITY</h2>
+                        <ul>
+                            ${responsibilities.map(resp => `
+                                <li><strong>${resp.title} | ${resp.org} (${resp.date || ''})</strong><br>
+                                ${resp.desc.replace(/\n/g, '<br>')}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            // Add achievements if any
+            if (achievements.length > 0) {
+                resumeHTML += `
+                    <div class="section">
+                        <h2>ACHIEVEMENTS</h2>
+                        <ul>
+                            ${achievements.map(ach => `
+                                <li>${ach}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Add custom sections if any
+            if (customSections.length > 0) {
+                customSections.forEach(section => {
+                    resumeHTML += `
+                        <div class="section">
+                            <h2>${section.title.toUpperCase()}</h2>
+                            <p>${section.content.replace(/\n/g, '<br>')}</p>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Close HTML tags
+            resumeHTML += `
+                </body>
+                </html>
+            `;
+            
+            // Open the resume in a new tab
+            const newWindow = window.open();
+            newWindow.document.open();
+            newWindow.document.write(resumeHTML);
+            newWindow.document.close();
+        }
+        
+        function printResume() {
+            // First generate the resume in the current window
+            document.getElementById('resumeForm').style.display = 'none';
+            
+            // Get all form values (same as generateResume function)
+            const fullName = document.getElementById('fullName').value;
+            const careerObjective = document.getElementById('careerObjective').value;
+            const email = document.getElementById('email').value;
+            const mobile = document.getElementById('mobile').value;
+            const github = document.getElementById('github').value;
+            const linkedin = document.getElementById('linkedin').value;
+            
+            // Collect all technical skills
+            const techSkills = [];
+            const techSkillInputs = document.querySelectorAll('input[id^="techSkill"]');
+            techSkillInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    techSkills.push(input.value);
+                }
+            });
+            
+            // Collect all soft skills
+            const softSkills = [];
+            const softSkillInputs = document.querySelectorAll('input[id^="softSkill"]');
+            softSkillInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    softSkills.push(input.value);
+                }
+            });
+            
+            // Education
+            const college = document.getElementById('college').value;
+            const degree = document.getElementById('degree').value;
+            const cgpa = document.getElementById('cgpa').value;
+            const collegeDate = document.getElementById('collegeDate').value;
+            const hscSchool = document.getElementById('hscSchool').value;
+            const hscPercentage = document.getElementById('hscPercentage').value;
+            const hscDate = document.getElementById('hscDate').value;
+            const sscSchool = document.getElementById('sscSchool').value;
+            const sscPercentage = document.getElementById('sscPercentage').value;
+            const sscDate = document.getElementById('sscDate').value;
+            
+            // Collect all experiences
+            const experiences = [];
+            for (let i = 1; i <= experienceCount; i++) {
+                const positionEl = document.getElementById(`position${i}`);
+                const companyEl = document.getElementById(`company${i}`);
+                
+                if (positionEl && companyEl && positionEl.value.trim() !== '' && companyEl.value.trim() !== '') {
+                    const position = positionEl.value;
+                    const company = companyEl.value;
+                    const expDate = document.getElementById(`expDate${i}`)?.value || '';
+                    const experience = document.getElementById(`experience${i}`)?.value || '';
+                    
+                    experiences.push({
+                        position,
+                        company,
+                        date: expDate,
+                        description: experience
+                    });
+                }
+            }
+            
+            // Collect all projects
+            const projects = [];
+            for (let i = 1; i <= projectCount; i++) {
+                const titleEl = document.getElementById(`project${i}Title`);
+                
+                if (titleEl && titleEl.value.trim() !== '') {
+                    const title = titleEl.value;
+                    const details = document.getElementById(`project${i}Details`)?.value || '';
+                    
+                    projects.push({
+                        title,
+                        details
+                    });
+                }
+            }
+            
+            // Collect all responsibilities
+            const responsibilities = [];
+            for (let i = 1; i <= responsibilityCount; i++) {
+                const titleEl = document.getElementById(`positionTitle${i}`);
+                
+                if (titleEl && titleEl.value.trim() !== '') {
+                    const title = titleEl.value;
+                    const org = document.getElementById(`positionOrg${i}`)?.value || '';
+                    const date = document.getElementById(`positionDate${i}`)?.value || '';
+                    const desc = document.getElementById(`positionDesc${i}`)?.value || '';
+                    
+                    responsibilities.push({
+                        title,
+                        org,
+                        date,
+                        desc
+                    });
+                }
+            }
+            
+            // Collect all achievements
+            const achievements = [];
+            for (let i = 1; i <= achievementCount; i++) {
+                const achievementEl = document.getElementById(`achievement${i}`);
+                if (achievementEl && achievementEl.value.trim() !== '') {
+                    achievements.push(achievementEl.value);
+                }
+            }
+
+            // Collect all custom sections
+            const customSections = [];
+            for (let i = 1; i <= customSectionCount; i++) {
+                const titleEl = document.getElementById(`customSectionTitle${i}`);
+                if (titleEl && titleEl.value.trim() !== '') {
+                    const title = titleEl.value;
+                    const content = document.getElementById(`customSectionContent${i}`)?.value || '';
+                    
+                    customSections.push({
+                        title,
+                        content
+                    });
                 }
             }
             
@@ -817,18 +1350,30 @@
                     </div>
                 `;
             }
+
+            // Add custom sections if any
+            if (customSections.length > 0) {
+                customSections.forEach(section => {
+                    resumeHTML += `
+                        <div class="section">
+                            <h2>${section.title.toUpperCase()}</h2>
+                            <p>${section.content.replace(/\n/g, '<br>')}</p>
+                        </div>
+                    `;
+                });
+            }
             
             // Display the generated resume
             const outputDiv = document.getElementById('resumeOutput');
             outputDiv.innerHTML = resumeHTML;
             outputDiv.style.display = 'block';
-        }
-        
-        function printResume() {
-            generateResume();
+
+            // Trigger print after a short delay
             setTimeout(() => {
                 window.print();
-            }, 100);
+                document.getElementById('resumeForm').style.display = 'block';
+                outputDiv.style.display = 'none';
+            }, 300);
         }
     </script>
 </body>
